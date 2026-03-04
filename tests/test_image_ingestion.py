@@ -1,7 +1,7 @@
 """
 Unit tests for image ingestion service.
 
-Tests GPT-4o vision integration, category normalization,
+Tests GPT-5.2 vision integration, category normalization,
 and expiry prediction pipeline.
 """
 import pytest
@@ -24,7 +24,7 @@ from app.services.ingestion.image_ingestion import (
 
 
 class TestGPT4oVisionClient:
-    """Tests for the GPT-4o Vision API client."""
+    """Tests for the GPT-5.2 Vision API client."""
 
     def setup_method(self):
         self.client = GPT4oVisionClient()
@@ -135,7 +135,7 @@ class TestGPT4oVisionClient:
         with pytest.raises(RuntimeError) as exc_info:
             client.detect_food_items(b"\xff\xd8\xff")
 
-        assert "GPT-4o API error" in str(exc_info.value)
+        assert "GPT-5.2 API error" in str(exc_info.value)
 
 
 class TestImageIngestionService:
@@ -207,7 +207,7 @@ class TestImageIngestionService:
     @patch("app.services.ingestion.image_ingestion.expiry_prediction_service")
     def test_ingest_from_image_success(self, mock_expiry_service, mock_vision_client):
         """Successful ingestion should return processed items with quantity."""
-        # Mock GPT-4o detection with quantity
+        # Mock GPT-5.2 detection with quantity
         mock_vision_client.detect_food_items.return_value = [
             DetectedFoodItem(name="whole milk", category="dairy", quantity=1, unit="Liters", quantity_confidence=0.9),
             DetectedFoodItem(name="chicken breast", category="meat", quantity=500, unit="Grams", quantity_confidence=0.7),
@@ -290,11 +290,11 @@ class TestImageIngestionService:
 
 
 class TestDetectionPrompt:
-    """Tests for the GPT-4o detection prompt."""
+    """Tests for the GPT-5.2 detection prompt."""
 
     def test_prompt_includes_required_categories(self):
-        """Prompt should include all GPT-4o food categories."""
-        # These are the categories GPT-4o is asked to use
+        """Prompt should include all GPT-5.2 food categories."""
+        # These are the categories GPT-5.2 is asked to use
         required_categories = [
             "dairy", "meat", "fish", "vegetables", "fruits",
             "grains", "snacks", "beverages", "frozen", "condiments", "other"
