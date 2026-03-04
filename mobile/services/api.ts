@@ -4,7 +4,7 @@ import { Token, User, DraftItem, DraftItemCreate, InventoryItem, InventoryItemCr
 // Update this to your backend URL
 // const API_BASE_URL = 'http://10.0.2.2:8000'; // Android emulator localhost
 // const API_BASE_URL = 'http://localhost:8000'; // iOS simulator
-const API_BASE_URL = 'http://172.20.10.4:8001'; // Physical device (your WiFi IP)
+const API_BASE_URL = 'http://172.20.10.4:8000'; // Physical device (your WiFi IP)
 
 const TOKEN_KEY = 'auth_token';
 
