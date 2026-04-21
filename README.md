@@ -209,7 +209,7 @@ pytest tests/ -v
 | `test_expiry_prediction.py` | 6 | Service | Rule-based predictions, fallback behaviour, determinism validation, custom purchase dates, case-insensitive matching |
 | `test_api.py` | 8 | Integration | Auth flow, JWT rejection, draft-to-inventory promotion with cleanup, inventory deletion, image ingestion endpoint, file type validation, health check |
 
-**23 tests, all passing.** Tests use SQLite in-memory and mock all GPT-5.2 calls. No API key or PostgreSQL needed to run them.
+**23 tests, all passing.** Tests use a file-backed SQLite database (`test.db`) and mock all GPT-5.2 calls. No API key or PostgreSQL needed to run them.
 
 ## API Reference
 

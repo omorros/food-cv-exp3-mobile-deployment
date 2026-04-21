@@ -137,7 +137,7 @@ class GPT4oVisionClient:
                     }
                 ],
                 response_format={"type": "json_object"},
-                max_tokens=800  # Increased to accommodate quantity fields per item
+                max_completion_tokens=800,
             )
         except Exception as e:
             raise RuntimeError(f"GPT-5.2 API error: {str(e)}")
