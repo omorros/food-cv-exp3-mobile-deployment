@@ -66,7 +66,7 @@ flowchart LR
     H --> I["InventoryItems\npersisted"]
 ```
 
-The GPT-5.2 client (`gpt4o_vision.py`) is fully decoupled from the rest of the app. It implements a clean interface that could be swapped for any alternative model without changing routes or mobile code.
+The GPT-5.2 client (`gpt52_vision.py`) is fully decoupled from the rest of the app. It implements a clean interface that could be swapped for any alternative model without changing routes or mobile code.
 
 **Category normalisation** maps 15 categories (e.g. `bread` to `bakery`, `other` to `None`). **Unit normalisation** enforces 5 valid units (`Pieces`, `Grams`, `Kilograms`, `Milliliters`, `Liters`) and expands abbreviations.
 
@@ -161,7 +161,7 @@ Design system uses warm organic tones: sage `#7C9A82` (primary), terracotta `#D4
 │   │   └── inventory_items.py         # Inventory CRUD
 │   └── services/
 │       ├── ingestion/
-│       │   ├── gpt4o_vision.py         # GPT-5.2 Vision API client
+│       │   ├── gpt52_vision.py         # GPT-5.2 Vision API client
 │       │   └── image_ingestion.py      # Orchestrator: detect, normalise, predict
 │       └── expiry_prediction/
 │           ├── service.py              # Multi-strategy orchestrator

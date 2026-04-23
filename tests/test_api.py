@@ -9,7 +9,7 @@ from datetime import date, timedelta
 from unittest.mock import patch, MagicMock
 from uuid import uuid4
 
-from app.services.ingestion.gpt4o_vision import DetectedFoodItem
+from app.services.ingestion.gpt52_vision import DetectedFoodItem
 
 
 class TestAuthFlow:
@@ -106,7 +106,7 @@ class TestDraftToInventoryFlow:
 class TestImageIngestion:
     """Tests for the image recognition endpoint."""
 
-    @patch("app.services.ingestion.image_ingestion.gpt4o_vision_client")
+    @patch("app.services.ingestion.image_ingestion.gpt52_vision_client")
     @patch("app.services.ingestion.image_ingestion.expiry_prediction_service")
     def test_ingest_image_creates_drafts(
         self, mock_expiry, mock_vision, client, test_user, auth_headers

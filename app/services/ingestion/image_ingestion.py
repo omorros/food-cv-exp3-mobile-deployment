@@ -8,13 +8,13 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 from datetime import date
 
-from app.services.ingestion.gpt4o_vision import gpt4o_vision_client, DetectedFoodItem
+from app.services.ingestion.gpt52_vision import gpt52_vision_client, DetectedFoodItem
 from app.services.expiry_prediction import expiry_prediction_service
 
 
 # Default confidence score for GPT-5.2 detections
 # User confirmation is the real trust gate, so we use a moderate fixed value
-GPT4O_DEFAULT_CONFIDENCE = 0.75
+GPT52_DEFAULT_CONFIDENCE = 0.75
 
 
 @dataclass
@@ -79,7 +79,7 @@ class ImageIngestionService:
         """
         # Step 1: Call GPT-5.2 Vision API
         try:
-            raw_items = gpt4o_vision_client.detect_food_items(image_bytes)
+            raw_items = gpt52_vision_client.detect_food_items(image_bytes)
         except RuntimeError as e:
             return ImageIngestionResult(
                 success=False,
@@ -119,7 +119,7 @@ class ImageIngestionService:
                     name=item.name,
                     category=normalized_category,
                     predicted_expiry=prediction.expiry_date.isoformat(),
-                    confidence_score=GPT4O_DEFAULT_CONFIDENCE,
+                    confidence_score=GPT52_DEFAULT_CONFIDENCE,
                     reasoning=prediction.reasoning,
                     quantity=item.quantity,
                     unit=normalized_unit,

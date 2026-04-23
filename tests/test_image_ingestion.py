@@ -8,22 +8,22 @@ import pytest
 from unittest.mock import patch, MagicMock
 from datetime import date, timedelta
 
-from app.services.ingestion.gpt4o_vision import (
-    GPT4oVisionClient,
+from app.services.ingestion.gpt52_vision import (
+    GPT52VisionClient,
     DetectedFoodItem,
 )
 from app.services.ingestion.image_ingestion import (
     ImageIngestionService,
-    GPT4O_DEFAULT_CONFIDENCE,
+    GPT52_DEFAULT_CONFIDENCE,
     VALID_UNITS,
 )
 
 
-class TestGPT4oVisionClient:
+class TestGPT52VisionClient:
     """Tests for the GPT-5.2 Vision API client."""
 
     def setup_method(self):
-        self.client = GPT4oVisionClient()
+        self.client = GPT52VisionClient()
 
     def test_detect_image_type(self):
         """Known formats should be detected; unknown defaults to jpeg."""
@@ -31,7 +31,7 @@ class TestGPT4oVisionClient:
         assert self.client._detect_image_type(b"\x89PNG\r\n\x1a\n" + b"\x00" * 10) == "png"
         assert self.client._detect_image_type(b"UNKNOWN" + b"\x00" * 10) == "jpeg"
 
-    @patch("app.services.ingestion.gpt4o_vision.OpenAI")
+    @patch("app.services.ingestion.gpt52_vision.OpenAI")
     def test_detect_food_items_success(self, mock_openai_class):
         """Successful detection should return list of DetectedFoodItem."""
         mock_client = MagicMock()
@@ -42,7 +42,7 @@ class TestGPT4oVisionClient:
         mock_response.choices[0].message.content = '{"items": [{"name": "milk", "category": "Dairy", "quantity": 1, "unit": "Liters", "quantity_confidence": 0.9}, {"name": "chicken breast", "category": "Meat", "quantity": 500, "unit": "Grams", "quantity_confidence": 0.7}]}'
         mock_client.chat.completions.create.return_value = mock_response
 
-        client = GPT4oVisionClient()
+        client = GPT52VisionClient()
         client._client = mock_client
 
         result = client.detect_food_items(b"\xff\xd8\xff")
@@ -55,7 +55,7 @@ class TestGPT4oVisionClient:
         assert result[1].name == "chicken breast"
         assert result[1].quantity == 500
 
-    @patch("app.services.ingestion.gpt4o_vision.OpenAI")
+    @patch("app.services.ingestion.gpt52_vision.OpenAI")
     def test_detect_food_items_null_quantity(self, mock_openai_class):
         """Items with null quantity should be handled gracefully."""
         mock_client = MagicMock()
@@ -66,7 +66,7 @@ class TestGPT4oVisionClient:
         mock_response.choices[0].message.content = '{"items": [{"name": "unknown item", "category": "Other", "quantity": null, "unit": null, "quantity_confidence": null}]}'
         mock_client.chat.completions.create.return_value = mock_response
 
-        client = GPT4oVisionClient()
+        client = GPT52VisionClient()
         client._client = mock_client
 
         result = client.detect_food_items(b"\xff\xd8\xff")
@@ -74,14 +74,14 @@ class TestGPT4oVisionClient:
         assert result[0].quantity is None
         assert result[0].unit is None
 
-    @patch("app.services.ingestion.gpt4o_vision.OpenAI")
+    @patch("app.services.ingestion.gpt52_vision.OpenAI")
     def test_detect_food_items_api_error(self, mock_openai_class):
         """API errors should raise RuntimeError."""
         mock_client = MagicMock()
         mock_openai_class.return_value = mock_client
         mock_client.chat.completions.create.side_effect = Exception("API Error")
 
-        client = GPT4oVisionClient()
+        client = GPT52VisionClient()
         client._client = mock_client
 
         with pytest.raises(RuntimeError, match="GPT-5.2 API error"):
@@ -119,7 +119,7 @@ class TestImageIngestionService:
         assert self.service._normalize_unit(None) is None
         assert self.service._normalize_unit("cups") is None
 
-    @patch("app.services.ingestion.image_ingestion.gpt4o_vision_client")
+    @patch("app.services.ingestion.image_ingestion.gpt52_vision_client")
     @patch("app.services.ingestion.image_ingestion.expiry_prediction_service")
     def test_ingest_from_image_success(self, mock_expiry_service, mock_vision_client):
         """Successful ingestion should return processed items with predictions."""
@@ -138,11 +138,11 @@ class TestImageIngestionService:
         assert result.success is True
         assert len(result.detected_items) == 2
         assert result.detected_items[0].name == "whole milk"
-        assert result.detected_items[0].confidence_score == GPT4O_DEFAULT_CONFIDENCE
+        assert result.detected_items[0].confidence_score == GPT52_DEFAULT_CONFIDENCE
         assert result.detected_items[0].quantity == 1
         assert result.detected_items[0].unit == "Liters"
 
-    @patch("app.services.ingestion.image_ingestion.gpt4o_vision_client")
+    @patch("app.services.ingestion.image_ingestion.gpt52_vision_client")
     def test_ingest_from_image_no_items(self, mock_vision_client):
         """Empty detection should return error."""
         mock_vision_client.detect_food_items.return_value = []
@@ -152,7 +152,7 @@ class TestImageIngestionService:
         assert result.success is False
         assert "No food items detected" in result.error_message
 
-    @patch("app.services.ingestion.image_ingestion.gpt4o_vision_client")
+    @patch("app.services.ingestion.image_ingestion.gpt52_vision_client")
     def test_ingest_from_image_api_error(self, mock_vision_client):
         """API errors should be handled gracefully."""
         mock_vision_client.detect_food_items.side_effect = RuntimeError("API failed")

@@ -79,7 +79,7 @@ Example output:
 If no food items are visible, return: {"items": []}"""
 
 
-class GPT4oVisionClient:
+class GPT52VisionClient:
     """
     Client for GPT-5.2 Vision API.
 
@@ -189,4 +189,4 @@ class GPT4oVisionClient:
 
 
 # Singleton instance
-gpt4o_vision_client = GPT4oVisionClient()
+gpt52_vision_client = GPT52VisionClient()
